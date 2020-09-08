@@ -1,0 +1,24 @@
+package com.shop.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import com.shop.vo.CartVO;
+
+public interface CartDAO {
+	
+	//카트 리스트
+	public List<Map<String, Object>> cartMap(String custId) throws Exception;
+	
+	//카트 담기
+	public void addCart(CartVO cvo) throws Exception;
+	
+	//업데이트 전 삭제
+	public void deleteCartBeforeInsert(String custId) throws Exception; 
+	
+	//카트 업데이트
+	public int updateCart(Map<String,Object> updCartMap) throws Exception;
+	
+	//카트삭제
+	public int deleteCart(String cartNo) throws Exception;
+}

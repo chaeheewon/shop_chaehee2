@@ -1,0 +1,138 @@
+package com.shop.chae;
+
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.google.gson.Gson;
+import com.shop.service.ProductService;
+import com.shop.vo.CtgVO;
+import com.shop.vo.PagingMaker;
+import com.shop.vo.ProductVO;
+import com.shop.vo.SearchCriteria;
+import com.shop.vo.UserSignUpVO;
+
+@Controller
+@RequestMapping("/*")
+public class ProductController {
+	
+	@Inject
+	private ProductService ebizService;
+	
+	@RequestMapping(value = "register" , method = RequestMethod.GET)
+	public void getGoodsRegister(Model model) throws Exception{
+		//logger.info("get goods register");
+		
+		// db에서 데이터 갖고 오기(List타입)
+		List<CtgVO> category =ebizService.category();
+		//json타입으로 변환
+		Gson gson = new Gson();
+		String categoryToJson = gson.toJson(category);
+		//logger.info("categoryToJson= "+categoryToJson);
+		
+		//json타입으로 된 데이터를 jsp에 넘김
+		model.addAttribute("category", categoryToJson);
+	}
+	
+	//등록
+	@RequestMapping(value = "register" , method = RequestMethod.POST)
+	public String postGoodsRegister(ProductVO pvo, RedirectAttributes reAttr) throws Exception{
+		ebizService.register(pvo);
+		reAttr.addFlashAttribute("result",  "regOk");
+		return "redirect:/goods/productList";
+	}
+	
+	//품목 중복 체크
+	@RequestMapping(value = "dupProdCheck" , method = RequestMethod.GET)
+	@ResponseBody
+	public int dupProdCheck(@RequestParam("prdCd") String prodCd) {
+		return ebizService.checkDupProd(prodCd);
+	}
+	
+	// 상품 리스트(페이징 및 검색기능 추가)
+	@RequestMapping(value = "/productList", method = RequestMethod.GET)
+	public String getProductList(@ModelAttribute("rtnVal") SearchCriteria sCria, Model model) throws Exception{
+/*		@ModelAttribute을 써서 HTTP 요청에 들어있는 속성값들을 Member 커맨드 객체에 자동적으로 바인딩 하게 된다. 
+		만일 @ModelAttribute([NAME]) 형태로 붙일경우 JSP파일에서 ${[NAME].property} 형태로 Model 객체의 값을 사용할 수 있게 된다.*/
+
+		//상품 리스트
+		model.addAttribute("prdList", ebizService.product(sCria));
+		
+		//페이징 및 검색
+		PagingMaker pagingMaker = new PagingMaker();
+		pagingMaker.setCri(sCria);
+		pagingMaker.setTotalData(ebizService.countSearch(sCria));
+        model.addAttribute("pagingMaker", pagingMaker);
+        return "/product/productList";
+	}
+	
+	//상품 상세조회
+	@RequestMapping(value = "/productDetail")
+	public String read(@RequestParam(value= "prodCd" ,required = false) String prodCd, Model model) throws Exception{
+		Map<String,Object> mapRnt = ebizService.productDtl(prodCd);
+		model.addAttribute("goods", mapRnt);
+		return "/product/productDetail";
+	}
+	
+	//수정 get
+	@RequestMapping(value = "modify", method = RequestMethod.GET)
+	public String modifyGet(@RequestParam(value = "prdCd" ,required = false) String prdCd, Model model) throws Exception{
+		Map<String,Object> mapRnt = ebizService.productDtl(prdCd);
+		model.addAttribute("goods",mapRnt);
+		return "/goods/modify";
+	}
+	
+	//수정 post
+	@RequestMapping(value = "modify" , method = RequestMethod.POST)
+	public String modifyPost(ProductVO pvo, RedirectAttributes reAttr) throws Exception{
+		ebizService.productUpd(pvo);
+		reAttr.addFlashAttribute("result", "Success"); 
+		return "redirect:/goods/productList";
+	}
+	
+	
+/*	rttr.addAttribute로 전달한 값은 url뒤에  붙으며, 
+	리프레시해도 데이터가 유지된다.
+	반면, rttr.addFlashAttribute로 전달한 값은 url뒤에 붙지 않는다. 
+	일회성이라 리프레시할 경우 데이터가 소멸한다.
+	또한 2개이상 쓸 경우, 데이터는 소멸되어 null값이 반환된다.
+	그래서 맵을 이용하여 값을 전달해야 한다*/
+	
+	//삭제
+	@RequestMapping(value = "delete")
+	public String delete(@RequestParam(value= "prdCd" ,required = false) String prdCd, RedirectAttributes reAttr) throws Exception{
+		ebizService.delete(prdCd);
+		reAttr.addFlashAttribute("result","delOk");
+		return "redirect:/goods/productList";
+	}
+	
+	//멀티삭제
+	@ResponseBody
+	@RequestMapping(value = "selectDelete",method = RequestMethod.POST)
+	public int selDelete(HttpSession session , @RequestParam(value = "chbox[]") List<String> chArr)throws Exception{
+		UserSignUpVO user = (UserSignUpVO)session.getAttribute("login");
+		String userId = "";
+		int result = 0;
+		String prodCd = "";
+		userId = user.getSignUpUserId();
+		System.out.println("userId= "+userId);
+		
+		if(userId != null) {
+			for(String val : chArr) {
+				prodCd = val;
+				System.out.println("prodCd"+prodCd);
+				ebizService.delete(prodCd);
+			}
+			result = 1;
+		}
+		return result;
+	}
+}

@@ -1,0 +1,103 @@
+package com.shop.service;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.shop.dao.CartDAO;
+import com.shop.vo.CartVO;
+
+@Service
+public class CartServiceImpl implements CartService{
+	private static final Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
+	@Inject
+	private CartDAO dao;
+	
+	//카트 담기
+	@Override
+	public void cartRegister(CartVO cvo) throws Exception {
+		dao.addCart(cvo);
+	}
+	
+	//카트 리스트
+	@Override
+	public List<Map<String, Object>> cartList(String custId) throws Exception {
+		List<Map<String, Object>> cartList = dao.cartMap(custId);
+		return cartList;
+	}
+	
+	//카트 업데이트
+	@Transactional
+	@Override
+	public Map<String, Object> cartUpdate(String stringData, String userId) throws Exception {
+		logger.info("currentTransactionName : {}", TransactionSynchronizationManager.getCurrentTransactionName());
+		//(gson라이브러리) JsonParser 객체 생성
+		JsonParser jsonParser = new JsonParser();
+		
+		//JsonParser로 문자열 파싱 후 jsonArray 객체에 저장
+		JsonArray array = (JsonArray) jsonParser.parse(stringData);
+		
+		// 리스트 객체 생성
+		List<Map<String, Object>> updCartList = new ArrayList<Map<String, Object>>();
+		
+		String custId = userId;
+		
+		for(int i=0; i<array.size(); i++) {
+			JsonObject obj = (JsonObject)array.get(i);
+			Map<String, Object> dataMap = new HashMap<String, Object>();
+			dataMap.put("custId", custId); //로그인한 아이디
+			dataMap.put("prodCd", obj.get("ProdCd") .getAsString()); // 품목코드
+			dataMap.put("cartStock", obj.get("Quantity").getAsString()); //수량
+			
+			//리스트에 담기
+			updCartList.add(dataMap);
+		}
+		
+		//myBatis 파라미터로 보낼 map생성
+		Map<String, Object> updCartMap = new HashMap<String, Object>();
+		updCartMap.put("custId", custId); // 사용자 id
+		updCartMap.put("updCartList", updCartList); // 카트 업데이트 정보
+
+		System.out.println("updCartMap= "+updCartMap);
+		
+		// 업데이트 전 기존 데이터 일괄 삭제
+		dao.deleteCartBeforeInsert(custId);
+		//일괄 업데이트
+		int rtnVal = dao.updateCart(updCartMap);
+		
+		// 컨트롤러에 보낼 리턴값 세팅
+		Map<String, Object> rtnCartMap = new HashMap<String, Object>(); 
+				
+		if(rtnVal > 0) {
+			rtnCartMap.put("result", "success");
+		}else {
+			rtnCartMap.put("result", "fail");
+		}
+		return rtnCartMap;
+	}
+
+	//카트 삭제
+	@Transactional
+	@Override
+	public int cartDelete(List<String> cartNoArr) throws Exception {
+		
+		String cartNo = ""; //파라미터 변수
+		int cnt = 0;
+		
+		for(String param : cartNoArr) {
+			cartNo = param;
+			cnt += dao.deleteCart(cartNo);
+		}
+		System.out.println("cnt= "+cnt);
+		return cnt;
+	}
+}

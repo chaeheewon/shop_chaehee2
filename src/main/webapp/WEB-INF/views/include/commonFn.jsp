@@ -1,0 +1,68 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<!-- ===========공통 팝업================== -->
+<div class="modal fade " id="modalBox" tabindex="-1" role="dialog" aria-labelledby="shoppingCartModal" aria-hidden="true" 
+data-backdrop="static" data-keybord="false" >
+	<div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+		<div class="modal-content" >
+			<div class="modal-header" style="background-color: #BBDEFB;">
+				<h5 class="modal-title" id="exampleModalCenterTitle">
+					<i class="fas fa-shopping-cart"> Shopping Cart</i>
+				</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true" class = "goShop">&times; </span>
+				</button>
+			</div>
+			<div class="modal-body" >
+				<h6 style="text-align: center;">
+					카트에 상품을 담았습니다. <br>  카트로 이동하시겠습니까?
+				</h6>
+			</div>
+			<div class="modal-footer" style="align: center;">
+				<div class="w-100">
+					<a href="/cart/shoppingCart" class="btn btn-outline-success"> 카트로 이동</a>
+					<a href="" class="btn btn-outline-dark float-right goShop" data-dismiss="modal"  >계속 쇼핑하기</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ===========공통 함수================== -->
+<script type= "text/javascript">
+$(document).ready(function(){
+	var price = "";  //가격
+    var rtnVal = ""; // return값
+
+    //반복문
+    $(".numComma").each(function(index, item){
+    	price = $(item).text();	
+    	rtnVal = numberWithCommas(price);
+    	$(this).text(rtnVal);
+    });
+    
+ 	// 숫자 천단위마다 콤마
+    function numberWithCommas(price){
+    	return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+	
+ 	// hover이벤트 사용
+ 	$('.wrap_menu .main_menu > li > a').hover(
+ 		function(){ //마우스 오버되었을때
+ 			$(this).css('color','#e65540');
+ 		},function(){ // 마우스 아웃되었을때
+ 			$(this).css('color','black');
+ 		});
+});
+
+// 클릭시 색 적용
+$('.wrap_menu .main_menu > li').each(function(){
+	$(this).on('click',function(){
+		$(this).addClass('selected');
+		$(this).siblings().removeClass('selected');
+		//$(this).toggleClass('selected');
+	});
+});
+</script>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

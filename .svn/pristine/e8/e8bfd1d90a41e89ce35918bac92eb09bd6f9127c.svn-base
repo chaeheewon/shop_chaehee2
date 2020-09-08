@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "Blog">
+	<select id = "blogList" resultType="BlogVO">
+  			SELECT BID AS bid
+  			          ,SUBJECT AS subject
+  			          ,CTG_CD AS category
+  			          ,CONTENT AS content
+  			          ,WRITER AS writer
+  			          ,INS_DT 
+  			          ,DATE_FORMAT(UPD_DT,'%Y-%m-%d') AS regDt
+  			 FROM TBL_BOARD 
+  			WHERE BID > 0
+  			ORDER BY BID DESC
+	</select>
+	<select id="readDetail" parameterType="int" resultType="BlogVO">
+	  			SELECT BID AS bid
+  			          ,SUBJECT AS subject
+  			          ,CTG_CD AS category
+  			          ,CONTENT AS content
+  			          ,WRITER AS writer
+  			          ,INS_DT 
+  			          ,DATE_FORMAT(UPD_DT,'%Y-%M-%d') AS regDt
+  			 FROM TBL_BOARD 
+  			WHERE BID = #{bid}
+	</select>
+</mapper>

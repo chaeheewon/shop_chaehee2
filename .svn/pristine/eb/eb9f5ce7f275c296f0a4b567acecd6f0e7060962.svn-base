@@ -1,0 +1,73 @@
+package com.shop.service;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
+import org.hibernate.Session;
+import org.springframework.stereotype.Service;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.shop.dao.CartDAO;
+import com.shop.vo.CartVO;
+
+@Service
+public class CartServiceImpl implements CartService{
+
+	@Inject
+	private CartDAO dao;
+	
+	//카트 담기
+	@Override
+	public void cartRegister(CartVO cvo) throws Exception {
+		dao.addCart(cvo);
+	}
+	
+	//카트 리스트
+	@Override
+	public List<Map<String, Object>> cartList(String custId) throws Exception {
+		List<Map<String, Object>> cartList = dao.cartMap(custId);
+		return cartList;
+	}
+	
+	//카트 업데이트
+	@Override
+	public Map<String, Object> cartUpdate(String stringData, String userId) throws Exception {
+		
+		//(gson라이브러리) JsonParser 객체 생성
+		JsonParser jsonParser = new JsonParser();
+		
+		//JsonParser로 문자열 파싱 후 jsonArray 객체에 저장
+		JsonArray array = (JsonArray) jsonParser.parse(stringData);
+		
+		// 리스트 객체 생성
+		List<Map<String, Object>> updCartList = new ArrayList<Map<String, Object>>();
+		
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		String custId = userId;
+		
+		for(int i=0; i<array.size(); i++) {
+			JsonObject obj = (JsonObject)array.get(i);
+			dataMap.put("custId", custId); //로그인한 아이디
+			dataMap.put("prodCd", obj.get("ProdCd") .getAsString()); // 품목코드
+			dataMap.put("cartStock", obj.get("Quantity").getAsString()); //수량
+			
+			//리스트에 담기
+			updCartList.add(dataMap);
+		}
+		
+		//myBatis 파라미터로 보낼 map생성
+		Map<String, Object> updCartMap = new HashMap<String, Object>();
+		updCartMap.put("updCartList", updCartList);
+		
+		//일괄업데이트
+		dao.updateCart(updCartMap);
+		
+		return null;
+	}
+}

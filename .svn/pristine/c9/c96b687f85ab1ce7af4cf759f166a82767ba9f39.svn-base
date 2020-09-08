@@ -1,0 +1,49 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!--===================-->
+<!-- 공통함수=============-->
+<!--===================-->
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static" data-keybord="false">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle"><i class="fas fa-shopping-cart"> shopping-cart</i></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		<p class= "text-align">카트에 상품을 담았습니다.</br>카트로 이동하시겠습니까?</p>
+      </div>
+      <div class="modal-footer">
+        
+        <a href= "/shoppingCart"><button type="button" class="btn btn-outline-success">카트로 이동</button></a>
+        <button type="button" class="btn btn-outline-dark" data-dismiss="modal">계속 쇼핑하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type= "text/javascript">
+$(document).ready(function(){
+	var price = "";  //가격
+    var rtnVal = ""; // return값
+
+    //반복문
+    $(".numComma").each(function(index, item){
+    	price = $(item).text();	
+    	rtnVal = numberWithCommas(price);
+    	$(this).text(rtnVal);
+    });
+    
+ 	// 숫자 천단위마다 콤마
+    function numberWithCommas(price){
+    	return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+});
+
+</script>
+

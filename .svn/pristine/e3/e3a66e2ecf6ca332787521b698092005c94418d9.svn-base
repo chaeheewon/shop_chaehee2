@@ -1,0 +1,97 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+<%@ include file="../../include/head.jsp" %>
+<%@ include file="../../include/header.jsp" %>
+
+<script type="text/javascript">
+ function LoginValidChk(){
+	 var idChk = $("#signInUserId").val();
+	 var pwChk = $("#signInUserPwd").val();
+	 
+	 if(idChk.length == 0){
+		 alert("아이디를 입력해주세요.");
+		 $("#signInUserId").focus(); 
+		 return;
+	 }	 
+	 if(pwChk.length == 0){
+		 alert("비밀번호를 입력해주세요.");
+		 $("#signInUserPwd").focus(); 
+		 return;
+	 }
+ }
+ </script>
+<body onload="document.LoginForm.signInUserId.focus();">
+<div class= "container">
+<h3 class="text-center text-blue pt-5">LOGIN or CREATE AN ACCOUNT</h3>
+<div class="container">
+
+    <!-- /.login-logo -->
+    <div id="login-row" class="row justify-content-center align-items-center">
+      <div id="login-column" class="col-md-6">
+       <div id="login-box" class="col-md-12">
+        <!--<p class="login-box-msg">Sign In</p>-->
+		
+		<!-- 로그인처리 -->
+        <form action="loginPost" method="post" name="LoginForm">
+            <div class="form-group has-feedback">
+                <input type="text" name="signInUserId" id="signInUserId" class="form-control" placeholder="ID">
+<!--                 <span class="glyphicon glyphicon-exclamation-sign form-control-feedback"></span> -->
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" name="signInUserPwd" id="signInUserPwd" class="form-control" placeholder="Password">
+<!--                 <span class="glyphicon glyphicon-lock form-control-feedback"></span> -->
+            </div>
+            <!-- /.col -->
+                <div class="form-group has-feedback">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat"  onclick="LoginValidChk" style="background-color:black">
+                        <i class="fa fa-sign-in"></i> Login in
+                    </button>
+                </div>
+            <div class="row">
+                <div class="col-xs-8">
+                    <div class="checkbox icheck"  style="padding:0px 0px 0px 30px;">
+                        <label>
+                            <input type="checkbox" name="useCookie" > Keeping login in session
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- /.col -->
+            </div>
+        </form>
+		
+		<!-- 네이버 로그인연동 -->
+        <div class="social-auth-links text-center">
+        <p>- or -</p>
+             <div class="form-group has-feedback" align = "center">	
+             	<a href="/user/naverLogin" >
+              		<i class="fa fa-naver"><img src="/dist/img/naverLogin.jpg"  height=43  width = "200"></i>
+             	</a>
+             	<a href="/user/kakaoLogin" >
+              		<i class="fa fa-naver"><img src="/dist/img/kakaoLogin.png"  height=43 width = "200" ></i>
+             	</a>
+             </div>         
+        </div>
+        <div class="form-group">
+				<div style="border-top: 1px solid #888; padding-top: 15px; font-size: 85%">
+					<p class="text-primary">
+						<font color= "red">Not a member yet? </font> <a href="/user/signup"  class="text-danger" ><font color= "black"> join us</font> </a><br>
+					</p>
+				</div>
+		</div>
+    </div>
+        </div>
+            </div>
+    <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->
+
+    </div>
+
+</body>
+        <%-- Main Footer --%>
+    <%@ include file="../../include/footer.jsp" %>
+</html>
+

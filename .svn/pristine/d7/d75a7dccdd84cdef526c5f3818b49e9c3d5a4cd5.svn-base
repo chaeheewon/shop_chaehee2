@@ -1,0 +1,26 @@
+package com.shop.dao;
+
+import java.util.List;
+import java.util.Map;
+import com.shop.vo.CtgVO;
+import com.shop.vo.PageCriteria;
+import com.shop.vo.ProductVO;
+
+public interface ProductDAO {
+	//카테고리
+	public List<CtgVO> category() throws Exception;
+	
+	//등록
+	public void register(ProductVO pvo) throws Exception;
+	
+	//목록조회
+	public List<ProductVO> product(PageCriteria sCria) throws Exception;
+	
+	public Map<String,Object> prdDtl(String prdCd) throws Exception;
+
+	public void delete(String prdCd) throws Exception;
+
+	public void update(ProductVO pvo);
+
+	public int checkDupProd(String prodCd);
+}

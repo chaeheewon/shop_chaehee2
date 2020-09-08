@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserSignIn">	
+<!-- <주의사항>
+      1. 커럼 대소문자 구별
+      2. parameterType은   UserSignInVO  , retultType은 return할 Type을 의미 여기선UserSignUpVO
+	  3. 각각의 컬럼을 VO객체 변수명과 동일하게 해줘야 정상적으로 매핑이된다. EX)  CPID AS signUpUserId -->
+	<select id="login"  parameterType="UserSignInVO"  resultType="UserSignUpVO">
+		SELECT CUST_ID AS signUpUserId
+			     ,CUST_PW AS signUpUserPwd
+			     ,CUST_NM AS userNm
+			     ,EMAIL_ADDR AS signUpUserEmail
+		 FROM CR_CUST 
+		WHERE CUST_ID = #{signInUserId}
+	</select>
+
+	<!-- 로그인 세션정보 저장 -->
+	<update id="keepLogin" parameterType="map">
+	UPDATE CR_CUST 
+	    SET  SESSION_KEY = #{sessionKey},
+	          SESSION_LIMIT = #{sessionLimit}
+	WHERE CUST_ID = #{signUpUserId}
+	</update>
+
+	<!-- 저장된 세션 정보 조회 -->
+	<select id="checkUserWithSessionKey"  parameterType="UserSignUpVO"	 resultType="UserSignUpVO">
+	SELECT CUST_ID AS signUpUserId
+		   ,CUST_PW AS signUpUserPwd
+		   ,CUST_NM AS userNm
+		   ,EMAIL_ADDR AS signUpUserEmail
+	FROM CR_CUST 
+    WHERE SESSION_KEY = #{sessionKey}
+	</select>
+	
+	<!-- NAVER 계정 존재 여부 체크 -->
+    <select id="checkNaverUserExists"  parameterType="String"	 resultType="String">
+	SELECT  CUST_ID  FROM CR_CUST WHERE CUST_ID = #{navId}
+	</select>
+	
+<!-- NAVER 계정 존재 여부 체크 -->
+<!-- 	<select id="checkUserExists"  statementType="CALLABLE"  parameterType="String">
+	{ #{rtnVal} = CALL CHECK_NAVER_USER_EXISTS(#{navId} } 
+	</select>  -->
+</mapper>

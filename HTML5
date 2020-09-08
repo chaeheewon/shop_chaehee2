@@ -1,0 +1,59 @@
+<!--< HTML 태그공부 >
+
+1. <a> 태그(Tag) 사용법 
+	
+	href : 연결할 주소를 지정 한다.
+	target : 링크를 클릭 할 때 창을 어떻게 열지 설정 한다.
+	title : 해당 링크에 마우스 커서를 올릴때 도움말 설명을 설정 한다.
+
+	(A) href 속성
+	href 속성은 <a> 태그(Tag)를 통해 연결할 주소를 지정 한다.
+	(1) 절대 경로 url : 링크의 전체경로
+ 	- <a href="http://electronic-moongchi.tistory.com">전자뭉치 블로그로 이동하기</a>
+	(2) 상대 경로 url : 같은 프로젝트 폴더 내의 경로
+ 	- <a href="main.html">메인으로 바로가기</a>
+	 - <a href="/user/detail.html">사용자 정보 상세보기</a>
+	(3) 자바스크립트 함수 호출
+	 - <a href="javascript:alert('알림');">알림</a>
+
+	(B) target 속성
+ 	target 속성은 링크를 클릭 할 때 창을 어떻게 열지 설정 한다. target 속성은 다양한 방식으로 지정 할 수 있다.
+	_self : 링크를 클릭한 해당 창에서 연다.
+	_blank : 링크를 새창으로 연다.
+	_parent : 부모 창에서 연다. (부모 창이 없으면 _self 속성으로 처리)
+	_top : 전체 브라우저 창에서 가장 상위의 창에서 연다. (부모 창이 없으면 _self 속성으로 처리)
+
+	(C) title 속성
+	title 속성은 해당 링크에 마우스 커서를 올릴때 도움말 설명을 설정 한다. 기본 사용법은 아래와 같다.
+	ex) <a href="http://electronic-moongchi.tistory.com" title="전자뭉치 블로그">전자뭉치 블로그로 이동하기</a> -->
+
+2.  c:out 태그 사용법
+	c:out 태그는 자바에서의 System.out.println 메서드와 비슷한 역할.
+	어떤 값을 입력받던지 간에 콘솔이 아닌 화면에 문자열로 바꾸어서 보여주는 역할
+					
+escapeXml = true 인 경우,
+<c:out value="<script type='text/javascript'>alert(1);</script>"/>
+c:out은 기본적으로 값이 어떻든 무조건 문자열을 출력하므로 해당 문자 그대로 출력이 됩니다. 
+이 때 escapeXml 속성은 true인 상태입니다.
+  					
+escapeXml = false 인 경우,
+<c:out value="<script type='text/javascript'>alert(1);</script>" escapeXml="false"/>
+위와 같은 경우 문자열이 출력되지 않고 해당 스크립트가 실행되어 alert 경고창이 뜹니다. 
+이 때 escapeXml 속성은 false인 경우이고 el태그를 그대로 사용할 때 이런 상태가 됩니다. 
+
+
+3.  <table> 태그 사용법
+	
+	<table> : 테이블을 만드는 태그
+	<th> : 테이블의 헤더부분을 만드는 태그
+	<tr> : 테이블의 행을 만드는 태그
+	<td> : 테이블의 열을 만드는 태그
+
+ <테이블 만드는 순서>
+A.먼저 제일 바깥쪽에는 <table></table>태그가 들어갑니다. 
+B. 가장 위에는 <th>라는 테이블 헤더 태그를 사용합니다.  Default값은 굵은 글씨체에 가운데 정렬이 기본값입니다. 
+    하지만, 대부분 <tr>태그를 활용하여 테이블 헤더를 만듭니다.
+C. 그 다음은 행을 만드는 태그 <tr>태그가 들어갑니다. 
+D. <tr>태그 안에는 열을 만드는 속성<td>태그가 들어갑니다.
+
+기타. colspan : 가로 합병(열 합병)  , rowspan : 세로 합병(행 합병)

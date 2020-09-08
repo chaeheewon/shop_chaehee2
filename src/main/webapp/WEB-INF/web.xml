@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring/root-context.xml</param-value>
+	</context-param>
+	
+<!--  참조사이트 => https://shj7242.github.io/2017/12/10/Spring31/
+		<개발자가 패스워드 암호화에서 알아야 할점>
+		1.복호화(디코딩)가 불가능한 단방향 암호코드로 만들어져야 한다.
+		2.암호는 개발자나 관리자도 알 수 없어야 하며 이용자 이외에는 누구도 접근할 수 없는 형태여야 한다.
+		3.공격자가 예측할 수 없도록 솔트 처리를 해주어야 한다.
+		4.데이터베이스에서 제공하는 (mysql , oracle 등) 암호화에 의존해서는 안된다.
+		
+		<스프링 시큐리티로 비밀번호 암호화하기>
+		1 . 스프링 시큐리티 라이브러리 추가하기(pom.xml) : 이 라이브러리를 추가할 때 조심해야하는 것은 스프링 버전과 잘 맞는지 확인해야하는 것이다. 
+		만일 잘 물리지 않는 버전을 사용했을 때 라이브러리를 날리고 다시설치해야한다.
+		2. spring-security.xml 생성 : 해당 xml 문서에는 비밀번호 암호화인코딩을 위한 bean을 추가해준다. 
+		스프링 시큐리티 라이브러리에서 제공하는 BcryptPasswordEncoder 는 비밀번호 암호화 메서드, 인코딩된 비밀번호와 Raw 형태의 
+		비밀번호를 비교해주는 메서드를 제공한다. 하지만 비밀번호를 디코딩하는 메서드는 지원하지 않는다.
+-->
+    <!--spring-security (비밀번호 암호화 설정)  -->
+	<context-param>
+  		<param-name>contextConfigLocation</param-name>
+  		<param-value>
+      	 /WEB-INF/spring/root-context.xml
+     	 /WEB-INF/spring/spring-security.xml
+  		</param-value>
+  	</context-param>
+	
+	
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Processes application requests -->
+	<servlet>
+		<servlet-name>appServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<!-- 한글설정 -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- HiddenHttpMethodFilter 등록 -->
+	<filter>
+		<filter-name>hiddenHttpMethodFilter</filter-name>
+		<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>hiddenHttpMethodFilter</filter-name>
+		<url-pattern>/</url-pattern>
+	</filter-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+</web-app>

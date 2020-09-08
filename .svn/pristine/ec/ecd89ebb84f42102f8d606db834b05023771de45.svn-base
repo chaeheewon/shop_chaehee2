@@ -1,0 +1,39 @@
+package com.shop.chae;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.shop.service.BlogService;
+import com.shop.vo.BlogVO;
+
+@Controller
+@RequestMapping("/blog/*")
+public class BlogController {
+	
+	//Logger
+	private static final Logger logger = LoggerFactory.getLogger(BlogController.class);
+	
+	@Inject
+	private BlogService bsvc;
+	
+	// blog 리스트 조
+	@RequestMapping(value = "/blog" , method = RequestMethod.GET)
+	public void Blog(Model model) throws Exception{
+		List<BlogVO> rtnBlogList = bsvc.BList();
+		model.addAttribute("BlogList", rtnBlogList);
+	}
+	
+	@RequestMapping(value = "/blogDetail" , method = RequestMethod.GET)
+	public void BlogDetail(@RequestParam(value = "blog_Id", required = false) int bid, Model model) throws Exception{
+		BlogVO bvo	=  bsvc.read(bid);
+	}
+}

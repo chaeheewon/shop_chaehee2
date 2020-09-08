@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Ebiz">
+<select id="CtgList"   resultType="CtgVO">  
+SELECT A.LV AS level, A.CTG_CD AS ctgCd , A.CTG_NM AS ctgNm, A.CTG_CD_REF AS ctgCdRef
+FROM
+(   SELECT 1 AS LV
+		, T1.CTG_CD
+        , T1.CTG_NM
+		, T1.CTG_CD_REF
+	FROM GP_CTG T1
+    WHERE T1.CTG_CD_REF = ''
+	UNION ALL
+	SELECT  2 AS LV
+		, T2.CTG_CD
+        , T2.CTG_NM
+		, T2.CTG_CD_REF
+	FROM GP_CTG T1, GP_CTG T2
+	WHERE T1.CTG_CD = T2.CTG_CD_REF
+ )A
+</select>
+<insert id = "register">
+INSERT INTO GP_PROD(
+     PROD_CD,
+     PROD_NM,
+     CTG_CD,
+     CNSM_PRCE,
+     QTY,
+     RMARK,
+     INS_USER,
+     UPD_USER
+)VALUES(
+     #{prodCd},
+     #{prodNm},
+     #{ctgCd},
+     #{csmePrice},
+     #{qty},
+     #{rmark},
+     'SYSTEM',
+     'SYSTEM'
+ )
+</insert>
+<select id="productList"   resultType="ProductVO"  parameterType="SearchCriteria">  
+SELECT PROD_CD as prodCd
+       ,PROD_NM as prodNm
+       ,CTG_CD as ctgCd
+       ,(CASE WHEN (SELECT A.CTG_CD_REF FROM GP_CTG A WHERE A.CTG_CD = P.CTG_CD) = 'H00' THEN '핸드백'
+                 WHEN (SELECT A.CTG_CD_REF FROM GP_CTG A WHERE A.CTG_CD = P.CTG_CD) = 'J00' THEN '주얼리'
+                 ELSE '시계'
+        END) AS ctgCdRef
+       ,CNSM_PRCE as csmePrice
+       ,QTY as qty
+       ,RMARK as rmark
+       ,INS_USER as insUser
+       ,INS_DT as insDt
+FROM GP_PROD P 
+ORDER BY INS_DT DESC
+LIMIT #{startPage},#{numPerPage}
+</select>
+
+<select id ="countSearch" resultType="int">
+	SELECT COUNT(PROD_CD) 
+	 FROM GP_PROD
+</select>
+
+<select id="prodDupCheck"   resultType="int">  
+	SELECT COUNT(PROD_CD) as cnt
+ 	 FROM GP_PROD P 
+    WHERE PROD_CD = #{prodCd}
+</select>
+
+<select id="productDetail"   resultType="hashmap">
+SELECT 
+        PROD_CD as prodCd
+       ,PROD_NM as prodNm
+       ,CTG_CD as ctgCd
+       ,(CASE WHEN (SELECT A.CTG_CD_REF FROM GP_CTG A WHERE A.CTG_CD = P.CTG_CD) = 'H00' THEN '핸드백'
+          WHEN (SELECT A.CTG_CD_REF FROM GP_CTG A WHERE A.CTG_CD = P.CTG_CD) = 'J00' THEN '주얼리'
+          ELSE '시계'
+        END) AS ctgCdRef
+       ,CNSM_PRCE as csmePrice
+       ,QTY as qty
+       ,RMARK as rmark
+       ,INS_USER as insUser
+       ,INS_DT as insDt
+FROM GP_PROD P
+WHERE PROD_CD = #{prdCd}
+</select>
+
+<update id = "update"  parameterType="ProductVO">
+UPDATE GP_PROD
+   SET  PROD_NM = #{prodNm}
+        , CNSM_PRCE = #{csmePrice}
+        , QTY  = #{qty}
+        , RMARK = #{rmark}
+        , UPD_USER = 'SYSTEM'
+ WHERE PROD_CD = #{prodCd}
+</update>
+
+<delete  id="delete"  >  
+DELETE FROM GP_PROD WHERE PROD_CD = #{prdCd}
+</delete>
+</mapper>

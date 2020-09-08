@@ -1,0 +1,22 @@
+package com.shop.service;
+
+import java.util.List;
+import java.util.Map;
+import com.shop.vo.CtgVO;
+import com.shop.vo.ProductVO;
+
+public interface ProductService {
+	public List<CtgVO> category() throws Exception;
+	
+	public void register(ProductVO pvo) throws Exception;
+	
+	public List<ProductVO> product() throws Exception;
+	
+	public Map<String,Object> productDtl(String prdCd) throws Exception;
+	
+	public void delete(String prdCd) throws Exception;
+
+	public void  productUpd(ProductVO pvo);
+
+	public int checkDupProd(String prodCd);
+}

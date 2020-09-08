@@ -1,0 +1,21 @@
+[Logging]
+
+로그(log)란 프로그램 개발이나 운영시에  발생하는 문제점을 추적하거나 운영상태를 모니터링 하기 위한 텍스트
+기본적인 로그 방법은 syso 
+좀더 향상된 방법으로는 로깅 프레임워크를 이용하는 방법이 있다.
+
+# 로깅프레임워크 종류
+- commons loggins
+http://commons.apache.org/proper/commons-logging/
+
+-log4j
+http://logging.apache.org/log4/2.x/
+
+-java util loggin
+http://docs.oracle.com/javase/6/docs/api/java/utill/logging/pakage-summary.html
+
+-logback
+http://logback.qos.ch/
+
+-slf4j
+http://org.slf4j.org/download.html 

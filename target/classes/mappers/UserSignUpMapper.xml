@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserSignUp">
+
+	<insert id="insertUserAccount" parameterType="com.shop.vo.UserSignUpVO">
+		INSERT INTO CR_CUST
+		( CUST_ID
+		  ,CUST_PW
+		  ,CUST_NM
+		  ,EMAIL_ADDR
+		  ,HP_NO
+		  ,ZIP_NO
+		 )VALUES(
+		   #{signUpUserId},				     <!-- 회원 아이디 -->
+		   #{signUpUserPwd},			     <!-- 회원 비밀번호-->
+		   #{userNm},	                     <!-- 회원명 -->
+		   #{signUpUserEmail},			     <!-- 회원 이메일 -->
+		   #{signUpUserTelNo},				 <!-- 회원 핸드폰번호-->
+		   #{zipNo}                               <!-- 우편번호-->
+		)	
+	</insert>
+	
+	<select id="checkDuplicationId"  parameterType="String"  resultType="String">
+		SELECT CUST_ID FROM CR_CUST 
+		WHERE CUST_ID = #{inputId}
+	</select>
+	
+	<select id="checkUserId"  parameterType="String"  resultType="int">
+		SELECT count(CUST_ID) FROM CR_CUST 
+		WHERE CUST_ID = #{inputId}
+	</select>	
+	
+	<select id="checkDuplicationMail"  parameterType="String"  resultType="String">
+		SELECT EMAIL_ADDR FROM CR_CUST 
+		WHERE EMAIL_ADDR = #{inputEmail}
+	</select> 
+	
+	<insert id="insertNaverUser" parameterType="UserSignUpVO">
+		INSERT INTO CR_CUST
+		( CUST_ID
+		  ,CUST_NM
+		  ,EMAIL_ADDR
+		 <!--  ,HP_NO -->
+		 )VALUES(
+		   #{signUpUserId},				     <!-- 회원 아이디 -->
+		   #{userNm},	                     <!-- 회원명 -->
+		   #{signUpUserEmail}			     <!-- 회원 이메일 -->
+		<!-- #{signUpUserTelNo}	 -->	 <!-- 회원 핸드폰번호-->
+		)	
+	</insert>	
+	<update id="updateAuthstatus"  parameterType="String">
+		UPDATE CR_CUST
+			  SET USER_STATUS = '1'
+	     WHERE CUST_ID = #{id}
+	</update>
+	<!-- 
+	<select id="noticeList" resultType="com.sjh.admin.vo.NoticeVO">
+		SELECT
+			 nno,ntitle,ncontent,nwriter,nrdate,nviewcnt,nisdelete
+		FROM 
+			 tbl_notice
+		WHERE
+			nisdelete = 'N'
+		ORDER BY nno DESC
+	</select>
+	
+	<select id="noticeRead" parameterType="com.sjh.admin.vo.NoticeVO" resultType="com.sjh.admin.vo.NoticeVO">
+		SELECT
+			nno,ntitle,ncontent,nwriter,nrdate,nviewcnt,nisdelete
+		FROM
+			tbl_notice
+		WHERE
+			nno = #{nno} 
+	</select> -->
+</mapper>

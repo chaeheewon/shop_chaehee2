@@ -1,0 +1,53 @@
+package com.shop.service;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+import org.springframework.stereotype.Service;
+
+import com.shop.dao.ProductDAO;
+import com.shop.vo.CtgVO;
+import com.shop.vo.ProductVO;
+
+
+@Service
+public class ProductServiceImpl implements ProductService{
+
+	@Inject
+	private ProductDAO dao;
+
+	@Override
+	public List<CtgVO> category() throws Exception {
+		return dao.category();
+	}
+
+	@Override
+	public void register(ProductVO pvo) throws Exception {
+		dao.register(pvo);
+	}
+
+	@Override
+	public List<ProductVO> product() throws Exception {
+		return dao.product();
+	}
+
+	@Override
+	public Map<String, Object> productDtl(String prdCd) throws Exception {
+		return dao.prdDtl(prdCd);
+	}
+
+	@Override
+	public void delete(String prdCd) throws Exception {
+		dao.delete(prdCd);
+	}
+
+	@Override
+	public void productUpd(ProductVO pvo) {
+		dao.update(pvo);
+	}
+
+	@Override
+	public int checkDupProd(String prodCd) {
+		int rtnVal = dao.checkDupProd(prodCd);
+		return rtnVal; 
+	}
+}

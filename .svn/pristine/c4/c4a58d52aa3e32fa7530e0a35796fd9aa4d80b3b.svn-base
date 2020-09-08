@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shoppingCart">
+<insert id = "insert"  keyProperty = "cartNo" useGeneratedKeys="true" >
+INSERT INTO GP_CART(
+     CART_NO,
+     CUST_ID,
+     PROD_CD,
+     CART_STOCK,
+     INS_DT,
+     INS_USER,
+     UPD_DT,
+     UPD_USER
+)VALUES(
+     #{cartNo},
+     #{custId},
+     #{prodCd},
+     #{cartStock},
+     NOW(),
+     #{custId},
+     NOW(),
+     #{custId}
+ )
+</insert>
+
+<select id = "select"  parameterType = "String" resultType = "hashmap">
+	SELECT
+         A.CART_NO as cartNo
+        ,A.CUST_ID as custId
+        ,A.CART_STOCK as cartStock
+		,B.PROD_CD as prodCd
+        ,B.PROD_NM as prodNm
+        ,B.CTG_CD as ctgCd
+        ,B.CNSM_PRCE as csmePrice
+        ,B.QTY as qty
+        ,B.RMARK as rmark
+	 FROM GP_CART A, GP_PROD B
+	WHERE A.PROD_CD = B.PROD_CD
+	  AND A.CUST_ID = #{custId}
+	ORDER BY A.UPD_DT DESC
+</select>
+
+<!--
+< 여러개의 Row가 담긴 dataList를 Map으로 한번에 저장하는 방법> 
+1.여러개의 Row가 담긴 List타입 데이터를 MyBatis에 던질 Map에 put해준다.
+2.MyBatis foreach의 collection value와 위에서 만든 Map의 key를 동일하게 맞춘다.
+<참고> foreach의 item은 foreach안에서 돌고있는 item이다.
+ java에서 for(Map<String,Object> i : dataList) 로 보면 된다 
+-->
+<insert id = "insertAfterDel" parameterType = "hashmap">
+	<!-- 삭제 -->
+	DELETE FROM GP_CART WHERE CUST_CD = #{custId}
+	;
+	<!-- 재등록 -->
+	INSERT INTO GP_CART(
+      CART_NO,
+      CUST_ID,
+      PROD_CD,
+      CART_STOCK,
+      INS_DT,
+      INS_USER,
+      UPD_DT,
+      UPD_USER
+	)VALUES
+	<foreach collection = "updCartList" item = "i" index = "idx" separator = ",">
+	(
+	  #{i.cartNo},
+	  #{i.custId},
+	  #{i.prodCd},
+	  #{i.cartStock},
+	  NOW(),
+	  #{i.custId},
+	  NOW(),
+	  #{i.custId}
+	)
+	;
+	</foreach>
+</insert>
+</mapper>
